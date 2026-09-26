@@ -6,10 +6,10 @@ reported as an error row instead of aborting the whole run.
 
 Usage:
     # models.json lists the contenders:
-    python leaderboard.py --models-file models.json --track single --max-tasks 30
+    python3 leaderboard.py --models-file models.json --track single --max-tasks 30
 
     # ...or pass them inline (repeatable): name,base_url,model-id
-    python leaderboard.py --track single --max-tasks 30 \\
+    python3 leaderboard.py --track single --max-tasks 30 \\
         --model "qwen2.5-coder,http://localhost:11434/v1,qwen2.5-coder:7b" \\
         --model "llama3.1,http://localhost:11434/v1,llama3.1:8b" \\
         --model "claude,anthropic:,claude-sonnet-4-6"
@@ -20,18 +20,18 @@ Usage:
 models.json format:
     [{"name": "qwen2.5-coder", "base_url": "http://localhost:11434/v1",
       "model": "qwen2.5-coder:7b"},
-     {"name": "claude", "provider": "anthropic", "model": "claude-sonnet-4-6"}]
+     {"name": "claude", "provider": "anthropic", "model": "claude-sonnet-4-6",
+      "pricing": {"input_per_million": 3, "output_per_million": 15}}]
+
+Pricing is optional and expressed in USD per million tokens. When supplied, the
+leaderboard reports estimated total cost and cost per successful task.
 """
 import argparse
 import json
-import sys
 import time
 
-sys.path.insert(0, "/home/hatch/workspace/vimbench")
-from llm_runner import make_provider, run_llm
-from multiturn import summarize_multiturn
-from scorer import summarize
-from tasks import TASKS
+from llm_runner import make_provider, run_llm, summarize_run
+from tasksets import load_tasks
 
 
 def parse_inline(spec):
@@ -68,10 +68,15 @@ def run_leaderboard(entries, tasks, track="single", max_turns=8, timeout=120):
         print(f"\n>>> {name} ({track}, {len(tasks)} tasks) ...", flush=True)
         t0 = time.time()
         try:
+            pricing = entry.get("pricing")
+            if pricing and (pricing.get("input_per_million") is None
+                            or pricing.get("output_per_million") is None):
+                raise ValueError("pricing requires input_per_million and output_per_million")
             provider = build_provider(entry, timeout)
-            results = run_llm(tasks, provider, track=track, max_turns=max_turns)
-            summary = (summarize_multiturn(results) if track == "multi"
-                       else summarize(results))
+            results = run_llm(tasks, provider, track=track,
+                              max_turns=max_turns,
+                              pricing=pricing)
+            summary = summarize_run(results, track)
             for r in results:  # keep the file small
                 r.pop("history", None)
                 r.pop("final_buffer", None)
@@ -86,16 +91,20 @@ def run_leaderboard(entries, tasks, track="single", max_turns=8, timeout=120):
         rows.append(row)
         print(("error: " + row["error"]) if row["error"]
               else f"pass {summary['passed']}/{summary['tasks']}  "
-                   f"eff {summary['avg_efficiency']}  ({fmt_time(row['seconds'])})")
+                   f"eff {summary['avg_efficiency']}  "
+                   f"p95 {summary['p95_latency_seconds'] or 0:.2f}s  "
+                   f"({fmt_time(row['seconds'])})")
     return rows, details
 
 
 def print_table(rows, track):
-    cols = ["model", "pass", "pass%", "efficiency", "partial", "time"]
+    cols = ["model", "pass", "pass%", "efficiency", "partial", "p95",
+            "tok/pass", "$/pass", "time"]
     if track == "multi":
         cols.insert(5, "turns")
     header = {"model": "model", "pass": "pass", "pass%": "pass%",
               "efficiency": "eff", "partial": "part", "turns": "turns",
+              "p95": "p95", "tok/pass": "tok/pass", "$/pass": "$/pass",
               "time": "time"}
     lines = []
     for r in sorted(rows, key=lambda r: (r.get("pass_rate") or -1,
@@ -105,17 +114,25 @@ def print_table(rows, track):
             lines.append((r["model"], "ERROR", r["error"][:60]))
             continue
         s = r
+        p95 = s.get("p95_latency_seconds")
+        tokens_per_pass = s.get("tokens_per_pass")
+        cost_per_pass = s.get("cost_per_pass_usd")
         line = {"model": r["model"],
                 "pass": f"{s['passed']}/{s['tasks']}",
                 "pass%": f"{s['pass_rate']:.0%}",
                 "efficiency": f"{s['avg_efficiency']:.3f}",
                 "partial": f"{s['avg_partial']:.3f}",
+                "p95": f"{p95:.2f}s" if p95 is not None else "-",
+                "tok/pass": (f"{tokens_per_pass:.0f}"
+                             if tokens_per_pass is not None else "-"),
+                "$/pass": (f"${cost_per_pass:.4f}"
+                           if cost_per_pass is not None else "-"),
                 "time": fmt_time(r["seconds"])}
         if track == "multi":
             line["turns"] = f"{s['avg_turns']:.1f}"
         lines.append(tuple(line[c] for c in cols))
-    widths = [max(len(header[c]), *(len(l[i]) for l in lines
-                                    if isinstance(l, tuple) and len(l) == len(cols)))
+    widths = [max([len(header[c])] + [len(l[i]) for l in lines
+                                      if isinstance(l, tuple) and len(l) == len(cols)])
               for i, c in enumerate(cols)]
     print("\n" + "  ".join(h.ljust(w) for h, w in zip(
         [header[c] for c in cols], widths)))
@@ -136,6 +153,8 @@ def main():
                          "(provider name as base_url for cloud)")
     ap.add_argument("--track", default="single", choices=["single", "multi"])
     ap.add_argument("--task-set", default="seed", choices=["seed", "synth", "all"])
+    ap.add_argument("--synth-tasks", default=None,
+                    help="synthesized task JSON (default: tasks_synth.json next to this script)")
     ap.add_argument("--max-tasks", type=int, default=30)
     ap.add_argument("--max-turns", type=int, default=8)
     ap.add_argument("--timeout", type=int, default=120)
@@ -144,15 +163,13 @@ def main():
 
     entries = []
     if args.models_file:
-        entries += json.load(open(args.models_file))
+        with open(args.models_file, encoding="utf-8") as f:
+            entries += json.load(f)
     entries += [parse_inline(m) for m in args.model]
     if not entries:
         ap.error("no models: pass --models-file or at least one --model")
 
-    tasks = list(TASKS)
-    if args.task_set in ("synth", "all"):
-        tasks += json.load(open("/home/hatch/workspace/vimbench/tasks_synth.json"))
-    tasks = tasks[:args.max_tasks]
+    tasks = load_tasks(args.task_set, args.synth_tasks)[:args.max_tasks]
     print(f"leaderboard: {len(entries)} models x {len(tasks)} tasks "
           f"(task-set={args.task_set}, track={args.track})")
 
@@ -160,7 +177,7 @@ def main():
                                     max_turns=args.max_turns,
                                     timeout=args.timeout)
     print_table(rows, args.track)
-    with open(args.out, "w") as f:
+    with open(args.out, "w", encoding="utf-8") as f:
         json.dump({"track": args.track, "task_set": args.task_set,
                    "rows": rows, "details": details}, f, indent=2)
     print(f"\nwrote {args.out}")

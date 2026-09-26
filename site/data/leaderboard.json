@@ -10,7 +10,10 @@
       "pass_rate": 1.0,
       "passed": 30,
       "seconds": 64.3,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.989,
@@ -19,7 +22,10 @@
       "pass_rate": 0.967,
       "passed": 29,
       "seconds": 46.1,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.96,
@@ -28,7 +34,10 @@
       "pass_rate": 0.967,
       "passed": 29,
       "seconds": 57.7,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.97,
@@ -37,7 +46,10 @@
       "pass_rate": 0.933,
       "passed": 28,
       "seconds": 56.5,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.977,
@@ -46,7 +58,10 @@
       "pass_rate": 0.9,
       "passed": 27,
       "seconds": 143.0,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.953,
@@ -55,7 +70,10 @@
       "pass_rate": 0.9,
       "passed": 27,
       "seconds": 52.8,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.985,
@@ -64,7 +82,10 @@
       "pass_rate": 0.867,
       "passed": 26,
       "seconds": 146.2,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.984,
@@ -73,7 +94,10 @@
       "pass_rate": 0.867,
       "passed": 26,
       "seconds": 62.5,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.953,
@@ -82,7 +106,10 @@
       "pass_rate": 0.833,
       "passed": 25,
       "seconds": 70.2,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.962,
@@ -91,7 +118,10 @@
       "pass_rate": 0.767,
       "passed": 23,
       "seconds": 65.8,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.933,
@@ -100,7 +130,10 @@
       "pass_rate": 0.733,
       "passed": 22,
       "seconds": 51.6,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.961,
@@ -109,7 +142,10 @@
       "pass_rate": 0.7,
       "passed": 21,
       "seconds": 182.6,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.951,
@@ -118,7 +154,10 @@
       "pass_rate": 0.667,
       "passed": 20,
       "seconds": 24.5,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.906,
@@ -127,7 +166,10 @@
       "pass_rate": 0.667,
       "passed": 20,
       "seconds": 58.6,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.981,
@@ -136,7 +178,10 @@
       "pass_rate": 0.633,
       "passed": 19,
       "seconds": 45.2,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.929,
@@ -145,7 +190,10 @@
       "pass_rate": 0.633,
       "passed": 19,
       "seconds": 25.0,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.928,
@@ -154,7 +202,10 @@
       "pass_rate": 0.533,
       "passed": 16,
       "seconds": 24.1,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.917,
@@ -163,7 +214,10 @@
       "pass_rate": 0.5,
       "passed": 15,
       "seconds": 24.2,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     },
     {
       "avg_efficiency": 0.939,
@@ -172,7 +226,10 @@
       "pass_rate": 0.167,
       "passed": 5,
       "seconds": 20.3,
-      "tasks": 30
+      "tasks": 30,
+      "cost_per_pass_usd": null,
+      "p95_latency_seconds": null,
+      "tokens_per_pass": null
     }
   ]
 }

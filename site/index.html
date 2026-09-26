@@ -76,15 +76,18 @@
                 <th scope="col">Passed</th>
                 <th scope="col">Efficiency</th>
                 <th scope="col">Partial</th>
+                <th scope="col">P95 latency</th>
+                <th scope="col">Tokens / pass</th>
+                <th scope="col">Cost / pass</th>
                 <th scope="col">Runtime</th>
               </tr>
             </thead>
             <tbody id="leaderboard-body">
-              <tr><td colspan="7" class="loading">Loading benchmark results…</td></tr>
+              <tr><td colspan="10" class="loading">Loading benchmark results…</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="table-note">Efficiency compares candidate keystroke length with the verified reference solution. Partial credit is a buffer similarity score on failures.</p>
+        <p class="table-note">Efficiency compares candidate keystroke length with the verified reference solution. Partial credit is a buffer similarity score on failures. P95 is the 95th-percentile provider-request latency. Tokens and cost are normalized by successful tasks; older runs without telemetry display “—”.</p>
       </div>
     </section>
 
