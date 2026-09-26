@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="vimbench measures how well language models can edit text using real Vim keystrokes.">
+  <meta name="theme-color" content="#10140f">
+  <meta property="og:title" content="vimbench — LLM Vim skill benchmark">
+  <meta property="og:description" content="Exact, deterministic scoring for language models editing with real Vim.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://supercobra.github.io/vimbench/">
+  <title>vimbench — benchmark LLMs on Vim</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#leaderboard">Skip to leaderboard</a>
+  <header class="nav shell">
+    <a class="brand" href="#top" aria-label="vimbench home"><span aria-hidden="true">:</span>vimbench</a>
+    <nav aria-label="Primary navigation">
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#method">Method</a>
+      <a class="repo-link" href="https://github.com/supercobra/vimbench">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> deterministic · real Vim · no judge model</p>
+        <h1>Can your model<br><em>speak Vim?</em></h1>
+        <p class="lede">Give a model a start buffer, a target buffer, and one instruction. It must return the keystrokes that get there—then we replay them in a real, headless Vim.</p>
+        <div class="actions">
+          <a class="button primary" href="#leaderboard">View results <span aria-hidden="true">↓</span></a>
+          <a class="button secondary" href="https://github.com/supercobra/vimbench#usage-examples">Run the benchmark <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="terminal" aria-label="Example vimbench task">
+        <div class="terminal-bar"><span></span><span></span><span></span><strong>task_t2.json</strong></div>
+        <div class="terminal-body">
+          <p><span class="muted">instruction</span></p>
+          <p class="quote">“Change the text inside the quotes to <b>goodbye</b>.”</p>
+          <p><span class="muted">start</span></p>
+          <pre><code>message = <mark>"hello world"</mark></code></pre>
+          <p><span class="muted">model keystrokes</span></p>
+          <pre class="command"><code><span class="prompt">:</span> f"ci"goodbye&lt;Esc&gt;:wq&lt;CR&gt;<span class="cursor"></span></code></pre>
+          <div class="terminal-result"><span>PASS</span><span>exact match · efficiency 1.00</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats shell" aria-label="Benchmark overview">
+      <article><strong id="model-count">19</strong><span>models tested</span></article>
+      <article><strong>30</strong><span>verified seed tasks</span></article>
+      <article><strong>4</strong><span>difficulty tiers</span></article>
+      <article><strong>0</strong><span>judge models</span></article>
+    </section>
+
+    <section class="leaderboard-section" id="leaderboard">
+      <div class="shell">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">01 / RESULTS</p>
+            <h2>Single-turn leaderboard</h2>
+          </div>
+          <p>Seed set · 30 tasks · exact byte comparison<br><span class="updated">Higher is better, except runtime.</span></p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Model</th>
+                <th scope="col">Pass rate</th>
+                <th scope="col">Passed</th>
+                <th scope="col">Efficiency</th>
+                <th scope="col">Partial</th>
+                <th scope="col">Runtime</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <tr><td colspan="7" class="loading">Loading benchmark results…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Efficiency compares candidate keystroke length with the verified reference solution. Partial credit is a buffer similarity score on failures.</p>
+      </div>
+    </section>
+
+    <section class="method shell" id="method">
+      <div class="section-heading">
+        <div>
+          <p class="kicker">02 / METHOD</p>
+          <h2>Small loop. Hard signal.</h2>
+        </div>
+        <p>Every score comes from executable behavior,<br>not another model’s opinion.</p>
+      </div>
+      <div class="steps">
+        <article>
+          <span class="step-number">01</span>
+          <h3>Prompt</h3>
+          <p>The model sees a start buffer, target buffer, natural-language instruction, and keystroke notation.</p>
+        </article>
+        <article>
+          <span class="step-number">02</span>
+          <h3>Replay</h3>
+          <p>Its answer is translated to bytes and replayed in clean, headless Vim with shell access disabled.</p>
+        </article>
+        <article>
+          <span class="step-number">03</span>
+          <h3>Compare</h3>
+          <p>The saved buffer is compared byte-for-byte with the target. Correct answers are scored for keystroke efficiency.</p>
+        </article>
+      </div>
+      <div class="pipeline" aria-label="Benchmark pipeline">
+        <span>model output</span><b>→</b><span>keystroke bytes</span><b>→</b><span>vim -u NONE</span><b>→</b><span>exact diff</span>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="shell cta-inner">
+        <div>
+          <p class="kicker">03 / RUN IT</p>
+          <h2>Your model.<br>Your machine.<br><em>Real Vim.</em></h2>
+        </div>
+        <div class="install-card">
+          <div class="install-title"><span>Quick start</span><span>Python 3 + Vim</span></div>
+          <pre><code><span>$</span> git clone https://github.com/supercobra/vimbench.git
+<span>$</span> cd vimbench
+<span>$</span> python3 run.py --verify
+<span>$</span> python3 llm_runner.py --provider mock --max-tasks 5</code></pre>
+          <a href="https://github.com/supercobra/vimbench#usage-examples">Read the full usage guide <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <a class="brand" href="#top"><span aria-hidden="true">:</span>vimbench</a>
+    <p>Open source. Exact by construction.</p>
+    <a href="https://github.com/supercobra/vimbench">supercobra/vimbench ↗</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,178 @@
+{
+  "track": "single",
+  "task_set": "seed",
+  "generated_from": "openai_leaderboard.json",
+  "rows": [
+    {
+      "avg_efficiency": 0.965,
+      "avg_partial": 1.0,
+      "model": "gpt-5.5",
+      "pass_rate": 1.0,
+      "passed": 30,
+      "seconds": 64.3,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.989,
+      "avg_partial": 0.999,
+      "model": "gpt-5.6-sol",
+      "pass_rate": 0.967,
+      "passed": 29,
+      "seconds": 46.1,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.96,
+      "avg_partial": 0.967,
+      "model": "o3",
+      "pass_rate": 0.967,
+      "passed": 29,
+      "seconds": 57.7,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.97,
+      "avg_partial": 0.963,
+      "model": "gpt-5.4",
+      "pass_rate": 0.933,
+      "passed": 28,
+      "seconds": 56.5,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.977,
+      "avg_partial": 0.926,
+      "model": "gpt-5",
+      "pass_rate": 0.9,
+      "passed": 27,
+      "seconds": 143.0,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.953,
+      "avg_partial": 0.942,
+      "model": "gpt-5.4-mini",
+      "pass_rate": 0.9,
+      "passed": 27,
+      "seconds": 52.8,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.985,
+      "avg_partial": 0.947,
+      "model": "o1",
+      "pass_rate": 0.867,
+      "passed": 26,
+      "seconds": 146.2,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.984,
+      "avg_partial": 0.947,
+      "model": "gpt-5.1",
+      "pass_rate": 0.867,
+      "passed": 26,
+      "seconds": 62.5,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.953,
+      "avg_partial": 0.945,
+      "model": "o4-mini",
+      "pass_rate": 0.833,
+      "passed": 25,
+      "seconds": 70.2,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.962,
+      "avg_partial": 0.926,
+      "model": "o3-mini",
+      "pass_rate": 0.767,
+      "passed": 23,
+      "seconds": 65.8,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.933,
+      "avg_partial": 0.915,
+      "model": "gpt-5.2",
+      "pass_rate": 0.733,
+      "passed": 22,
+      "seconds": 51.6,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.961,
+      "avg_partial": 0.902,
+      "model": "gpt-5.6-luna",
+      "pass_rate": 0.7,
+      "passed": 21,
+      "seconds": 182.6,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.951,
+      "avg_partial": 0.9,
+      "model": "gpt-4.1-mini",
+      "pass_rate": 0.667,
+      "passed": 20,
+      "seconds": 24.5,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.906,
+      "avg_partial": 0.904,
+      "model": "gpt-5.4-nano",
+      "pass_rate": 0.667,
+      "passed": 20,
+      "seconds": 58.6,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.981,
+      "avg_partial": 0.909,
+      "model": "gpt-5.6-terra",
+      "pass_rate": 0.633,
+      "passed": 19,
+      "seconds": 45.2,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.929,
+      "avg_partial": 0.867,
+      "model": "gpt-4o",
+      "pass_rate": 0.633,
+      "passed": 19,
+      "seconds": 25.0,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.928,
+      "avg_partial": 0.808,
+      "model": "gpt-4.1",
+      "pass_rate": 0.533,
+      "passed": 16,
+      "seconds": 24.1,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.917,
+      "avg_partial": 0.832,
+      "model": "gpt-4o-mini",
+      "pass_rate": 0.5,
+      "passed": 15,
+      "seconds": 24.2,
+      "tasks": 30
+    },
+    {
+      "avg_efficiency": 0.939,
+      "avg_partial": 0.417,
+      "model": "gpt-4.1-nano",
+      "pass_rate": 0.167,
+      "passed": 5,
+      "seconds": 20.3,
+      "tasks": 30
+    }
+  ]
+}
