@@ -277,15 +277,18 @@ python leaderboard.py --track multi --max-tasks 30 \
 ]
 ```
 
-Example output:
+Example output (from a demo run: a perfect reference solution, a stub local
+model served over HTTP, and an unreachable server):
 
 ```
-model          pass  pass%  eff    part   time
--------------  ----  -----  -----  -----  ----
-qwen2.5-coder  38/50  76%   0.912  0.881  4m12s
-mistral        31/50  62%   0.874  0.803  3m48s
-claude         ERROR: ANTHROPIC_API_KEY not set
+model       pass   pass%  eff    part   time
+----------  -----  -----  -----  -----  ----
+reference   30/30  100%   1.000  1.000  0s
+stub-local  1/30   3%     1.000  0.467  0s
+unreachable  ERROR: could not reach a local LLM at http://127.0.0.1:19999/v1 (is
 ```
+
+On the multi-turn track the table gains a `turns` column (average turns used).
 
 ## Future work
 
