@@ -16,6 +16,9 @@ function renderRows(rows) {
         { text: `${row.passed} / ${row.tasks}` },
         { text: decimal(row.avg_efficiency) },
         { text: decimal(row.avg_partial) },
+        { text: row.p95_latency_seconds == null ? "—" : `${Number(row.p95_latency_seconds).toFixed(2)}s` },
+        { text: row.tokens_per_pass == null ? "—" : Number(row.tokens_per_pass).toFixed(0) },
+        { text: row.cost_per_pass_usd == null ? "—" : `$${Number(row.cost_per_pass_usd).toFixed(4)}` },
         { text: `${Number(row.seconds).toFixed(1)}s` },
       ];
 
@@ -58,5 +61,5 @@ fetch("data/leaderboard.json")
   })
   .then((payload) => renderRows(payload.rows))
   .catch((error) => {
-    body.innerHTML = `<tr><td colspan="7" class="loading">Results could not be loaded (${error.message}). View the raw data on GitHub.</td></tr>`;
+    body.innerHTML = `<tr><td colspan="10" class="loading">Results could not be loaded (${error.message}). View the raw data on GitHub.</td></tr>`;
   });
