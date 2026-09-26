@@ -19,7 +19,8 @@
     <a class="brand" href="#top" aria-label="vimbench home"><span aria-hidden="true">:</span>vimbench</a>
     <nav aria-label="Primary navigation">
       <a href="#leaderboard">Leaderboard</a>
-      <a href="#method">Method</a>
+      <a href="#why-vim">Why Vim?</a>
+      <a href="methodology.html">Methodology</a>
       <a class="repo-link" href="https://github.com/supercobra/vimbench">GitHub <span aria-hidden="true">↗</span></a>
     </nav>
   </header>
@@ -87,10 +88,49 @@
       </div>
     </section>
 
+    <section class="why shell" id="why-vim">
+      <div class="section-heading">
+        <div>
+          <p class="kicker">02 / WHY VIM?</p>
+          <h2>A small editor test<br>with a bigger signal.</h2>
+        </div>
+        <p>Vim is not the point. Reliable tool use is.</p>
+      </div>
+      <div class="why-intro">
+        <p class="why-lede">Vim turns editing into a compact language of actions: move, select, change, repeat, save. To solve a task, an LLM must translate intent into an exact sequence, track state, and stop with the right result. Those are the same habits a useful coding agent needs when it edits your files, calls tools, or carries out a multi-step instruction.</p>
+        <p>This makes vimbench a focused test of <strong>execution reliability</strong>, not a claim that Vim knowledge equals intelligence. Every answer is run, every final buffer is checked, and short correct solutions are rewarded. There is no judge model deciding whether an answer “looks right.”</p>
+      </div>
+      <div class="choice-grid">
+        <article>
+          <span class="step-number">SIGNAL 01</span>
+          <h3>Exactness</h3>
+          <p>A high pass rate means the model more often turns a clear request into the exact requested state—fewer almost-right edits for you to repair.</p>
+        </article>
+        <article>
+          <span class="step-number">SIGNAL 02</span>
+          <h3>Efficiency</h3>
+          <p>Efficient solutions use fewer actions. For everyday agents, that can mean shorter traces, less opportunity for drift, and lower tool overhead.</p>
+        </article>
+        <article>
+          <span class="step-number">SIGNAL 03</span>
+          <h3>Recovery signal</h3>
+          <p>Partial credit shows how close failures get. It helps distinguish a near miss from a model that leaves the document badly mangled.</p>
+        </article>
+      </div>
+      <aside class="choice-note">
+        <div>
+          <span class="step-number">FOR EVERYDAY USERS</span>
+          <h3>Use it as one decision signal, not the whole decision.</h3>
+        </div>
+        <p>Choose a model with strong pass rate when dependable file edits matter. Use efficiency to break ties between similarly accurate models, then weigh price, speed, context window, privacy, and performance on your own tasks. A model that wins vimbench may still be the wrong choice for writing, research, vision, or conversation.</p>
+        <a class="text-link" href="methodology.html">See exactly what the benchmark measures <span aria-hidden="true">→</span></a>
+      </aside>
+    </section>
+
     <section class="method shell" id="method">
       <div class="section-heading">
         <div>
-          <p class="kicker">02 / METHOD</p>
+          <p class="kicker">03 / METHOD</p>
           <h2>Small loop. Hard signal.</h2>
         </div>
         <p>Every score comes from executable behavior,<br>not another model’s opinion.</p>
@@ -115,12 +155,13 @@
       <div class="pipeline" aria-label="Benchmark pipeline">
         <span>model output</span><b>→</b><span>keystroke bytes</span><b>→</b><span>vim -u NONE</span><b>→</b><span>exact diff</span>
       </div>
+      <a class="button methodology-link" href="methodology.html">Read the full methodology <span aria-hidden="true">→</span></a>
     </section>
 
     <section class="cta">
       <div class="shell cta-inner">
         <div>
-          <p class="kicker">03 / RUN IT</p>
+          <p class="kicker">04 / RUN IT</p>
           <h2>Your model.<br>Your machine.<br><em>Real Vim.</em></h2>
         </div>
         <div class="install-card">
