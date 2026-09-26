@@ -1,0 +1,650 @@
+[
+ {
+  "tier": 1,
+  "title": "Delete line 1",
+  "instruction": "Delete line 1 of the file.",
+  "start": "apple\nugli\nhoneydew\nolive\n",
+  "target": "ugli\nhoneydew\nolive\n",
+  "reference": "1Gdd:wq<CR>",
+  "id": "syn-delete_line-000"
+ },
+ {
+  "tier": 1,
+  "title": "Delete line 3",
+  "instruction": "Delete line 3 of the file.",
+  "start": "melon\nbanana\ndate\nnectarine\nraspberry\napricot\nhoneydew\nolive\n",
+  "target": "melon\nbanana\nnectarine\nraspberry\napricot\nhoneydew\nolive\n",
+  "reference": "3Gdd:wq<CR>",
+  "id": "syn-delete_line-001"
+ },
+ {
+  "tier": 1,
+  "title": "Delete line 2",
+  "instruction": "Delete line 2 of the file.",
+  "start": "plum\npear\npapaya\nplum\nbanana\n",
+  "target": "plum\npapaya\nplum\nbanana\n",
+  "reference": "2Gdd:wq<CR>",
+  "id": "syn-delete_line-002"
+ },
+ {
+  "tier": 1,
+  "title": "Delete line 6",
+  "instruction": "Delete line 6 of the file.",
+  "start": "tangerine\nvanilla\nolive\ngrape\nugli\nvanilla\n",
+  "target": "tangerine\nvanilla\nolive\ngrape\nugli\n",
+  "reference": "6Gdd:wq<CR>",
+  "id": "syn-delete_line-003"
+ },
+ {
+  "tier": 1,
+  "title": "Delete lines 6-7",
+  "instruction": "Delete lines 6 through 7 of the file.",
+  "start": "grape\nolive\ncoconut\ndate\nstrawberry\nmango\nnectarine\nkiwi\n",
+  "target": "grape\nolive\ncoconut\ndate\nstrawberry\nkiwi\n",
+  "reference": "6G2dd:wq<CR>",
+  "id": "syn-delete_range-004"
+ },
+ {
+  "tier": 1,
+  "title": "Delete lines 3-4",
+  "instruction": "Delete lines 3 through 4 of the file.",
+  "start": "papaya\nnectarine\ntangerine\nkiwi\npear\napple\n",
+  "target": "papaya\nnectarine\npear\napple\n",
+  "reference": "3G2dd:wq<CR>",
+  "id": "syn-delete_range-005"
+ },
+ {
+  "tier": 1,
+  "title": "Delete lines 1-4",
+  "instruction": "Delete lines 1 through 4 of the file.",
+  "start": "orange\npeach\nraspberry\npear\napricot\n",
+  "target": "apricot\n",
+  "reference": "1G4dd:wq<CR>",
+  "id": "syn-delete_range-006"
+ },
+ {
+  "tier": 1,
+  "title": "Delete lines 4-5",
+  "instruction": "Delete lines 4 through 5 of the file.",
+  "start": "tangerine\nelderberry\norange\nelderberry\nfig\nfig\n",
+  "target": "tangerine\nelderberry\norange\nfig\n",
+  "reference": "4G2dd:wq<CR>",
+  "id": "syn-delete_range-007"
+ },
+ {
+  "tier": 1,
+  "title": "Swap lines 1 and 2",
+  "instruction": "Swap lines 1 and 2.",
+  "start": "nectarine\napricot\nbanana\ntangerine\n",
+  "target": "apricot\nnectarine\nbanana\ntangerine\n",
+  "reference": "1Gddp:wq<CR>",
+  "id": "syn-swap_adjacent-008"
+ },
+ {
+  "tier": 1,
+  "title": "Swap lines 2 and 3",
+  "instruction": "Swap lines 2 and 3.",
+  "start": "lime\nhoneydew\nkiwi\n",
+  "target": "lime\nkiwi\nhoneydew\n",
+  "reference": "2Gddp:wq<CR>",
+  "id": "syn-swap_adjacent-009"
+ },
+ {
+  "tier": 1,
+  "title": "Swap lines 4 and 5",
+  "instruction": "Swap lines 4 and 5.",
+  "start": "peach\nolive\nlime\nbanana\npeach\n",
+  "target": "peach\nolive\nlime\npeach\nbanana\n",
+  "reference": "4Gddp:wq<CR>",
+  "id": "syn-swap_adjacent-010"
+ },
+ {
+  "tier": 1,
+  "title": "Swap lines 1 and 2",
+  "instruction": "Swap lines 1 and 2.",
+  "start": "nectarine\npear\ndate\n",
+  "target": "pear\nnectarine\ndate\n",
+  "reference": "1Gddp:wq<CR>",
+  "id": "syn-swap_adjacent-011"
+ },
+ {
+  "tier": 1,
+  "title": "Reverse all lines",
+  "instruction": "Reverse the order of all lines in the file.",
+  "start": "tangerine\nugli\nbanana\n",
+  "target": "banana\nugli\ntangerine\n",
+  "reference": ":g/^/m0<CR>:wq<CR>",
+  "id": "syn-reverse-012"
+ },
+ {
+  "tier": 1,
+  "title": "Reverse all lines",
+  "instruction": "Reverse the order of all lines in the file.",
+  "start": "honeydew\ncoconut\ngrape\nmelon\nstrawberry\nquince\norange\n",
+  "target": "orange\nquince\nstrawberry\nmelon\ngrape\ncoconut\nhoneydew\n",
+  "reference": ":g/^/m0<CR>:wq<CR>",
+  "id": "syn-reverse-013"
+ },
+ {
+  "tier": 1,
+  "title": "Reverse all lines",
+  "instruction": "Reverse the order of all lines in the file.",
+  "start": "apricot\nolive\nelderberry\n",
+  "target": "elderberry\nolive\napricot\n",
+  "reference": ":g/^/m0<CR>:wq<CR>",
+  "id": "syn-reverse-014"
+ },
+ {
+  "tier": 1,
+  "title": "Reverse all lines",
+  "instruction": "Reverse the order of all lines in the file.",
+  "start": "nectarine\nelderberry\npapaya\n",
+  "target": "papaya\nelderberry\nnectarine\n",
+  "reference": ":g/^/m0<CR>:wq<CR>",
+  "id": "syn-reverse-015"
+ },
+ {
+  "tier": 1,
+  "title": "Copy line 4 to the end",
+  "instruction": "Copy line 4 and paste the copy after the last line.",
+  "start": "quince\norange\napricot\nkiwi\nlemon\nugli\n",
+  "target": "quince\norange\napricot\nkiwi\nlemon\nugli\nkiwi\n",
+  "reference": "4GyyGp:wq<CR>",
+  "id": "syn-yank_to_end-016"
+ },
+ {
+  "tier": 1,
+  "title": "Copy line 2 to the end",
+  "instruction": "Copy line 2 and paste the copy after the last line.",
+  "start": "lemon\ntangerine\nlime\n",
+  "target": "lemon\ntangerine\nlime\ntangerine\n",
+  "reference": "2GyyGp:wq<CR>",
+  "id": "syn-yank_to_end-017"
+ },
+ {
+  "tier": 1,
+  "title": "Copy line 2 to the end",
+  "instruction": "Copy line 2 and paste the copy after the last line.",
+  "start": "orange\napple\nugli\napple\n",
+  "target": "orange\napple\nugli\napple\napple\n",
+  "reference": "2GyyGp:wq<CR>",
+  "id": "syn-yank_to_end-018"
+ },
+ {
+  "tier": 1,
+  "title": "Copy line 2 to the end",
+  "instruction": "Copy line 2 and paste the copy after the last line.",
+  "start": "honeydew\nraspberry\nfig\n",
+  "target": "honeydew\nraspberry\nfig\nraspberry\n",
+  "reference": "2GyyGp:wq<CR>",
+  "id": "syn-yank_to_end-019"
+ },
+ {
+  "tier": 1,
+  "title": "Change the word on line 2",
+  "instruction": "On line 2, replace the word with apple.",
+  "start": "raspberry\npeach\nvanilla\npear\n",
+  "target": "raspberry\napple\nvanilla\npear\n",
+  "reference": "2Gcwapple<Esc>:wq<CR>",
+  "id": "syn-change_word-020"
+ },
+ {
+  "tier": 1,
+  "title": "Change the word on line 2",
+  "instruction": "On line 2, replace the word with mango.",
+  "start": "mango\nkiwi\ntangerine\n",
+  "target": "mango\nmango\ntangerine\n",
+  "reference": "2Gcwmango<Esc>:wq<CR>",
+  "id": "syn-change_word-021"
+ },
+ {
+  "tier": 1,
+  "title": "Change the word on line 5",
+  "instruction": "On line 5, replace the word with apricot.",
+  "start": "fig\norange\napple\nlemon\napple\nugli\n",
+  "target": "fig\norange\napple\nlemon\napricot\nugli\n",
+  "reference": "5Gcwapricot<Esc>:wq<CR>",
+  "id": "syn-change_word-022"
+ },
+ {
+  "tier": 1,
+  "title": "Change the word on line 2",
+  "instruction": "On line 2, replace the word with peach.",
+  "start": "apricot\nlemon\nugli\n",
+  "target": "apricot\npeach\nugli\n",
+  "reference": "2Gcwpeach<Esc>:wq<CR>",
+  "id": "syn-change_word-023"
+ },
+ {
+  "tier": 1,
+  "title": "Join all lines",
+  "instruction": "Join all lines into a single line, separated by single spaces.",
+  "start": "mango\napple\npeach\n",
+  "target": "mango apple peach\n",
+  "reference": ":%j<CR>:wq<CR>",
+  "id": "syn-join_all-024"
+ },
+ {
+  "tier": 1,
+  "title": "Join all lines",
+  "instruction": "Join all lines into a single line, separated by single spaces.",
+  "start": "apple\nnectarine\nvanilla\n",
+  "target": "apple nectarine vanilla\n",
+  "reference": ":%j<CR>:wq<CR>",
+  "id": "syn-join_all-025"
+ },
+ {
+  "tier": 1,
+  "title": "Join all lines",
+  "instruction": "Join all lines into a single line, separated by single spaces.",
+  "start": "strawberry\ntangerine\nbanana\nraspberry\nbanana\n",
+  "target": "strawberry tangerine banana raspberry banana\n",
+  "reference": ":%j<CR>:wq<CR>",
+  "id": "syn-join_all-026"
+ },
+ {
+  "tier": 1,
+  "title": "Join all lines",
+  "instruction": "Join all lines into a single line, separated by single spaces.",
+  "start": "papaya\nnectarine\nnectarine\nnectarine\npear\n",
+  "target": "papaya nectarine nectarine nectarine pear\n",
+  "reference": ":%j<CR>:wq<CR>",
+  "id": "syn-join_all-027"
+ },
+ {
+  "tier": 2,
+  "title": "Uppercase line 3",
+  "instruction": "Convert line 3 to uppercase.",
+  "start": "orange\ncoconut\nnectarine\napple\nugli\n",
+  "target": "orange\ncoconut\nNECTARINE\napple\nugli\n",
+  "reference": "3GgUU:wq<CR>",
+  "id": "syn-uppercase_line-028"
+ },
+ {
+  "tier": 2,
+  "title": "Uppercase line 6",
+  "instruction": "Convert line 6 to uppercase.",
+  "start": "ugli\nolive\nlemon\nquince\nlime\ndate\n",
+  "target": "ugli\nolive\nlemon\nquince\nlime\nDATE\n",
+  "reference": "6GgUU:wq<CR>",
+  "id": "syn-uppercase_line-029"
+ },
+ {
+  "tier": 2,
+  "title": "Uppercase line 1",
+  "instruction": "Convert line 1 to uppercase.",
+  "start": "tangerine\nlime\nquince\nquince\nvanilla\ncherry\n",
+  "target": "TANGERINE\nlime\nquince\nquince\nvanilla\ncherry\n",
+  "reference": "1GgUU:wq<CR>",
+  "id": "syn-uppercase_line-030"
+ },
+ {
+  "tier": 2,
+  "title": "Uppercase line 4",
+  "instruction": "Convert line 4 to uppercase.",
+  "start": "lime\ntangerine\npapaya\nvanilla\n",
+  "target": "lime\ntangerine\npapaya\nVANILLA\n",
+  "reference": "4GgUU:wq<CR>",
+  "id": "syn-uppercase_line-031"
+ },
+ {
+  "tier": 2,
+  "title": "Append semicolon to each line",
+  "instruction": "Append a semicolon to the end of every line.",
+  "start": "apricot\napricot\napple\nelderberry\nbanana\ngrape\n",
+  "target": "apricot;\napricot;\napple;\nelderberry;\nbanana;\ngrape;\n",
+  "reference": ":%s/$/;/<CR>:wq<CR>",
+  "id": "syn-append_semi-032"
+ },
+ {
+  "tier": 2,
+  "title": "Append semicolon to each line",
+  "instruction": "Append a semicolon to the end of every line.",
+  "start": "cherry\ncherry\nkiwi\norange\n",
+  "target": "cherry;\ncherry;\nkiwi;\norange;\n",
+  "reference": ":%s/$/;/<CR>:wq<CR>",
+  "id": "syn-append_semi-033"
+ },
+ {
+  "tier": 2,
+  "title": "Append semicolon to each line",
+  "instruction": "Append a semicolon to the end of every line.",
+  "start": "lemon\nmango\nelderberry\npapaya\nfig\n",
+  "target": "lemon;\nmango;\nelderberry;\npapaya;\nfig;\n",
+  "reference": ":%s/$/;/<CR>:wq<CR>",
+  "id": "syn-append_semi-034"
+ },
+ {
+  "tier": 2,
+  "title": "Append semicolon to each line",
+  "instruction": "Append a semicolon to the end of every line.",
+  "start": "pear\ngrape\nvanilla\n",
+  "target": "pear;\ngrape;\nvanilla;\n",
+  "reference": ":%s/$/;/<CR>:wq<CR>",
+  "id": "syn-append_semi-035"
+ },
+ {
+  "tier": 2,
+  "title": "Comment every line",
+  "instruction": "Prefix every line with '# ' (hash + space).",
+  "start": "date\napple\ncherry\nolive\ntangerine\napple\n",
+  "target": "# date\n# apple\n# cherry\n# olive\n# tangerine\n# apple\n",
+  "reference": ":%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment-036"
+ },
+ {
+  "tier": 2,
+  "title": "Comment every line",
+  "instruction": "Prefix every line with '# ' (hash + space).",
+  "start": "orange\nugli\nolive\nstrawberry\napple\n",
+  "target": "# orange\n# ugli\n# olive\n# strawberry\n# apple\n",
+  "reference": ":%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment-037"
+ },
+ {
+  "tier": 2,
+  "title": "Comment every line",
+  "instruction": "Prefix every line with '# ' (hash + space).",
+  "start": "pear\norange\nvanilla\n",
+  "target": "# pear\n# orange\n# vanilla\n",
+  "reference": ":%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment-038"
+ },
+ {
+  "tier": 2,
+  "title": "Comment every line",
+  "instruction": "Prefix every line with '# ' (hash + space).",
+  "start": "banana\nmelon\norange\n",
+  "target": "# banana\n# melon\n# orange\n",
+  "reference": ":%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment-039"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines alphabetically",
+  "instruction": "Sort all lines alphabetically.",
+  "start": "olive\nplum\nmelon\nstrawberry\npeach\nugli\nfig\n",
+  "target": "fig\nmelon\nolive\npeach\nplum\nstrawberry\nugli\n",
+  "reference": ":sort<CR>:wq<CR>",
+  "id": "syn-sort-040"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines alphabetically",
+  "instruction": "Sort all lines alphabetically.",
+  "start": "vanilla\napricot\napple\nraspberry\n",
+  "target": "apple\napricot\nraspberry\nvanilla\n",
+  "reference": ":sort<CR>:wq<CR>",
+  "id": "syn-sort-041"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines alphabetically",
+  "instruction": "Sort all lines alphabetically.",
+  "start": "lime\napple\nkiwi\nplum\nnectarine\nstrawberry\nfig\ncherry\n",
+  "target": "apple\ncherry\nfig\nkiwi\nlime\nnectarine\nplum\nstrawberry\n",
+  "reference": ":sort<CR>:wq<CR>",
+  "id": "syn-sort-042"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines alphabetically",
+  "instruction": "Sort all lines alphabetically.",
+  "start": "vanilla\napple\nquince\nlime\nolive\nfig\napricot\nmango\n",
+  "target": "apple\napricot\nfig\nlime\nmango\nolive\nquince\nvanilla\n",
+  "reference": ":sort<CR>:wq<CR>",
+  "id": "syn-sort-043"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines, removing duplicates",
+  "instruction": "Sort all lines alphabetically and remove duplicate lines.",
+  "start": "peach\nhoneydew\nlemon\npeach\nhoneydew\n",
+  "target": "honeydew\nlemon\npeach\n",
+  "reference": ":sort u<CR>:wq<CR>",
+  "id": "syn-sort_unique-044"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines, removing duplicates",
+  "instruction": "Sort all lines alphabetically and remove duplicate lines.",
+  "start": "vanilla\nlemon\npapaya\nugli\nbanana\nvanilla\nlime\nlime\n",
+  "target": "banana\nlemon\nlime\npapaya\nugli\nvanilla\n",
+  "reference": ":sort u<CR>:wq<CR>",
+  "id": "syn-sort_unique-045"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines, removing duplicates",
+  "instruction": "Sort all lines alphabetically and remove duplicate lines.",
+  "start": "date\nraspberry\norange\npapaya\npapaya\nkiwi\norange\npear\n",
+  "target": "date\nkiwi\norange\npapaya\npear\nraspberry\n",
+  "reference": ":sort u<CR>:wq<CR>",
+  "id": "syn-sort_unique-046"
+ },
+ {
+  "tier": 3,
+  "title": "Sort lines, removing duplicates",
+  "instruction": "Sort all lines alphabetically and remove duplicate lines.",
+  "start": "orange\nolive\nbanana\npear\nolive\npear\nugli\nnectarine\n",
+  "target": "banana\nnectarine\nolive\norange\npear\nugli\n",
+  "reference": ":sort u<CR>:wq<CR>",
+  "id": "syn-sort_unique-047"
+ },
+ {
+  "tier": 3,
+  "title": "Replace 'plum' with 'kiwi'",
+  "instruction": "Replace every occurrence of 'plum' with 'kiwi' in the whole file.",
+  "start": "plum lemon\napricot plum\nplum cherry apple\n",
+  "target": "kiwi lemon\napricot kiwi\nkiwi cherry apple\n",
+  "reference": ":%s/plum/kiwi/g<CR>:wq<CR>",
+  "id": "syn-substitute-048"
+ },
+ {
+  "tier": 3,
+  "title": "Replace 'pear' with 'coconut'",
+  "instruction": "Replace every occurrence of 'pear' with 'coconut' in the whole file.",
+  "start": "date pear melon\nbanana date pear pear\nquince elderberry ugli ugli\n",
+  "target": "date coconut melon\nbanana date coconut coconut\nquince elderberry ugli ugli\n",
+  "reference": ":%s/pear/coconut/g<CR>:wq<CR>",
+  "id": "syn-substitute-049"
+ },
+ {
+  "tier": 3,
+  "title": "Replace 'grape' with 'melon'",
+  "instruction": "Replace every occurrence of 'grape' with 'melon' in the whole file.",
+  "start": "grape date pear olive\npapaya grape tangerine\nvanilla date strawberry\nquince ugli mango grape\n",
+  "target": "melon date pear olive\npapaya melon tangerine\nvanilla date strawberry\nquince ugli mango melon\n",
+  "reference": ":%s/grape/melon/g<CR>:wq<CR>",
+  "id": "syn-substitute-050"
+ },
+ {
+  "tier": 3,
+  "title": "Replace 'lime' with 'mango'",
+  "instruction": "Replace every occurrence of 'lime' with 'mango' in the whole file.",
+  "start": "elderberry strawberry orange lime\napricot melon lime\nlime nectarine ugli\nlime ugli kiwi plum\n",
+  "target": "elderberry strawberry orange mango\napricot melon mango\nmango nectarine ugli\nmango ugli kiwi plum\n",
+  "reference": ":%s/lime/mango/g<CR>:wq<CR>",
+  "id": "syn-substitute-051"
+ },
+ {
+  "tier": 3,
+  "title": "Strip trailing whitespace",
+  "instruction": "Remove all trailing whitespace (spaces and tabs) from every line.",
+  "start": "elderberry\t \npeach \nlime \npear\nlemon\t \t\n",
+  "target": "elderberry\npeach\nlime\npear\nlemon\n",
+  "reference": ":%s/\\s\\+$//<CR>:wq<CR>",
+  "id": "syn-strip_tws-052"
+ },
+ {
+  "tier": 3,
+  "title": "Strip trailing whitespace",
+  "instruction": "Remove all trailing whitespace (spaces and tabs) from every line.",
+  "start": "tangerine  \npeach\napricot\nnectarine\n",
+  "target": "tangerine\npeach\napricot\nnectarine\n",
+  "reference": ":%s/\\s\\+$//<CR>:wq<CR>",
+  "id": "syn-strip_tws-053"
+ },
+ {
+  "tier": 3,
+  "title": "Strip trailing whitespace",
+  "instruction": "Remove all trailing whitespace (spaces and tabs) from every line.",
+  "start": "fig\t\nmelon \ndate  \t\n",
+  "target": "fig\nmelon\ndate\n",
+  "reference": ":%s/\\s\\+$//<CR>:wq<CR>",
+  "id": "syn-strip_tws-054"
+ },
+ {
+  "tier": 3,
+  "title": "Strip trailing whitespace",
+  "instruction": "Remove all trailing whitespace (spaces and tabs) from every line.",
+  "start": "pear  \t\napricot\nelderberry \ngrape\n",
+  "target": "pear\napricot\nelderberry\ngrape\n",
+  "reference": ":%s/\\s\\+$//<CR>:wq<CR>",
+  "id": "syn-strip_tws-055"
+ },
+ {
+  "tier": 3,
+  "title": "Delete lines containing 'ZZZ'",
+  "instruction": "Delete every line that contains 'ZZZ'.",
+  "start": "nectarine\napricot\norange\npeach\ndate ZZZ lime\n",
+  "target": "nectarine\napricot\norange\npeach\n",
+  "reference": ":%s/.*ZZZ.*//<CR>:g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_matching-056"
+ },
+ {
+  "tier": 3,
+  "title": "Delete lines containing 'ZZZ'",
+  "instruction": "Delete every line that contains 'ZZZ'.",
+  "start": "strawberry ZZZ strawberry\nplum\nvanilla ZZZ peach\nmango\nstrawberry\nnectarine ZZZ coconut\napple\n",
+  "target": "plum\nmango\nstrawberry\napple\n",
+  "reference": ":%s/.*ZZZ.*//<CR>:g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_matching-057"
+ },
+ {
+  "tier": 3,
+  "title": "Delete lines containing 'ZZZ'",
+  "instruction": "Delete every line that contains 'ZZZ'.",
+  "start": "grape ZZZ honeydew\nraspberry\nplum ZZZ fig\nhoneydew\nmelon ZZZ quince\napricot\n",
+  "target": "raspberry\nhoneydew\napricot\n",
+  "reference": ":%s/.*ZZZ.*//<CR>:g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_matching-058"
+ },
+ {
+  "tier": 3,
+  "title": "Delete lines containing 'ZZZ'",
+  "instruction": "Delete every line that contains 'ZZZ'.",
+  "start": "quince\nhoneydew\nplum ZZZ papaya\nplum ZZZ peach\nraspberry\npeach\napple\n",
+  "target": "quince\nhoneydew\nraspberry\npeach\napple\n",
+  "reference": ":%s/.*ZZZ.*//<CR>:g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_matching-059"
+ },
+ {
+  "tier": 3,
+  "title": "Delete blank lines",
+  "instruction": "Delete all blank lines.",
+  "start": "\n\n\n\nraspberry\n\n",
+  "target": "raspberry\n",
+  "reference": ":g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_blanks-060"
+ },
+ {
+  "tier": 3,
+  "title": "Delete blank lines",
+  "instruction": "Delete all blank lines.",
+  "start": "apple\nlime\nfig\n\n\n\n",
+  "target": "apple\nlime\nfig\n",
+  "reference": ":g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_blanks-061"
+ },
+ {
+  "tier": 3,
+  "title": "Delete blank lines",
+  "instruction": "Delete all blank lines.",
+  "start": "plum\ndate\nnectarine\nfig\n\npeach\n\n",
+  "target": "plum\ndate\nnectarine\nfig\npeach\n",
+  "reference": ":g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_blanks-062"
+ },
+ {
+  "tier": 3,
+  "title": "Delete blank lines",
+  "instruction": "Delete all blank lines.",
+  "start": "quince\n\npapaya\nelderberry\ncherry\n",
+  "target": "quince\npapaya\nelderberry\ncherry\n",
+  "reference": ":g/^$/d<CR>:wq<CR>",
+  "id": "syn-delete_blanks-063"
+ },
+ {
+  "tier": 3,
+  "title": "Move lines 3-5 to the top",
+  "instruction": "Move lines 3 through 5 to the top of the file, preserving order.",
+  "start": "honeydew\nbanana\nvanilla\nbanana\nstrawberry\n",
+  "target": "vanilla\nbanana\nstrawberry\nhoneydew\nbanana\n",
+  "reference": ":3,5m0<CR>:wq<CR>",
+  "id": "syn-move_range_top-064"
+ },
+ {
+  "tier": 3,
+  "title": "Move lines 4-6 to the top",
+  "instruction": "Move lines 4 through 6 to the top of the file, preserving order.",
+  "start": "apricot\nolive\nbanana\nelderberry\nfig\nlemon\ncoconut\n",
+  "target": "elderberry\nfig\nlemon\napricot\nolive\nbanana\ncoconut\n",
+  "reference": ":4,6m0<CR>:wq<CR>",
+  "id": "syn-move_range_top-065"
+ },
+ {
+  "tier": 3,
+  "title": "Move lines 5-6 to the top",
+  "instruction": "Move lines 5 through 6 to the top of the file, preserving order.",
+  "start": "nectarine\nquince\nlemon\ndate\nvanilla\nquince\npear\n",
+  "target": "vanilla\nquince\nnectarine\nquince\nlemon\ndate\npear\n",
+  "reference": ":5,6m0<CR>:wq<CR>",
+  "id": "syn-move_range_top-066"
+ },
+ {
+  "tier": 3,
+  "title": "Move lines 5-7 to the top",
+  "instruction": "Move lines 5 through 7 to the top of the file, preserving order.",
+  "start": "fig\nlemon\nbanana\nhoneydew\napricot\napricot\ncoconut\npear\n",
+  "target": "apricot\napricot\ncoconut\nfig\nlemon\nbanana\nhoneydew\npear\n",
+  "reference": ":5,7m0<CR>:wq<CR>",
+  "id": "syn-move_range_top-067"
+ },
+ {
+  "tier": 4,
+  "title": "Strip trailing whitespace and comment",
+  "instruction": "Remove trailing whitespace from every line AND prefix every line with '# '.",
+  "start": "date  \nbanana \ncherry\n",
+  "target": "# date\n# banana\n# cherry\n",
+  "reference": ":%s/\\s\\+$//<CR>:%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment_strip-068"
+ },
+ {
+  "tier": 4,
+  "title": "Strip trailing whitespace and comment",
+  "instruction": "Remove trailing whitespace from every line AND prefix every line with '# '.",
+  "start": "elderberry\nlime \npeach\nmelon \n",
+  "target": "# elderberry\n# lime\n# peach\n# melon\n",
+  "reference": ":%s/\\s\\+$//<CR>:%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment_strip-069"
+ },
+ {
+  "tier": 4,
+  "title": "Strip trailing whitespace and comment",
+  "instruction": "Remove trailing whitespace from every line AND prefix every line with '# '.",
+  "start": "tangerine  \nmelon  \npeach \nfig  \ngrape  \n",
+  "target": "# tangerine\n# melon\n# peach\n# fig\n# grape\n",
+  "reference": ":%s/\\s\\+$//<CR>:%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment_strip-070"
+ },
+ {
+  "tier": 4,
+  "title": "Strip trailing whitespace and comment",
+  "instruction": "Remove trailing whitespace from every line AND prefix every line with '# '.",
+  "start": "plum \nplum \nfig \nbanana  \n",
+  "target": "# plum\n# plum\n# fig\n# banana\n",
+  "reference": ":%s/\\s\\+$//<CR>:%s/^/# /<CR>:wq<CR>",
+  "id": "syn-comment_strip-071"
+ }
+]

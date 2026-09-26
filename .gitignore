@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+
+# generated result artifacts (reproducible via the scripts)
+/demo_results.json
+/llm_results.json
+/llm_multi.json
+/leaderboard.json
+/results.json
