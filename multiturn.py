@@ -11,11 +11,11 @@ possible). Agents must re-issue :set or re-record macros within a single turn.
 Agent protocol: agent(obs) -> {"keys": notation} | {"done": True}
   obs = {"id", "instruction", "start", "buffer", "turn", "max_turns", "history"}
 """
-import sys
+from difflib import SequenceMatcher
 
-sys.path.insert(0, "/home/hatch/workspace/vimbench")
 from harness import run_vim, keystroke_count, tokenize
 from scorer import summarize
+from telemetry import aggregate_usage
 
 
 def run_multiturn(task, agent, max_turns=8):
@@ -24,11 +24,20 @@ def run_multiturn(task, agent, max_turns=8):
     total_keys = 0
     ref_keys = keystroke_count(task["reference"])
     turns_used = 0
+    request_latencies = []
+    request_usages = []
     for turn in range(1, max_turns + 1):
         obs = {"id": task["id"], "instruction": task["instruction"],
                "start": task["start"], "buffer": buf, "turn": turn,
                "max_turns": max_turns, "history": history}
         action = agent(obs)
+        telemetry = action.get("telemetry") or {}
+        latency = telemetry.get("latency_seconds")
+        usage = telemetry.get("usage")
+        if latency is not None:
+            request_latencies.append(latency)
+        if usage:
+            request_usages.append(usage)
         if action.get("done"):
             break
         keys = action.get("keys", "")
@@ -44,17 +53,23 @@ def run_multiturn(task, agent, max_turns=8):
         if err is not None or buf == task["target"]:
             break
     passed = buf == task["target"]
+    partial = (1.0 if passed else
+               SequenceMatcher(None, buf, task["target"]).ratio())
     efficiency = min(1.0, ref_keys / total_keys) if (passed and total_keys) else 0.0
     return {"id": task["id"], "tier": task["tier"], "passed": passed,
             "turns_used": turns_used, "keystrokes": total_keys,
             "ref_keystrokes": ref_keys, "efficiency": round(efficiency, 3),
+            "partial": round(partial, 3),
+            "latency_seconds": round(sum(request_latencies), 6),
+            "request_latencies": request_latencies,
+            "usage": aggregate_usage(request_usages),
             "final_buffer": buf, "history": history}
 
 
 def summarize_multiturn(results):
-    s = summarize([{"passed": r["passed"], "efficiency": r["efficiency"],
-                    "partial": 1.0 if r["passed"] else 0.0} for r in results])
-    s["avg_turns"] = round(sum(r["turns_used"] for r in results) / len(results), 2)
+    s = summarize(results)
+    s["avg_turns"] = (round(sum(r["turns_used"] for r in results) / len(results), 2)
+                      if results else 0.0)
     return s
 
 
@@ -111,7 +126,6 @@ class RecoverAgent:
 
 
 def demo():
-    sys.path.insert(0, "/home/hatch/workspace/vimbench")
     from tasks import TASKS
     by_id = {t["id"]: t for t in TASKS}
     chunked_sample = [by_id[i] for i in

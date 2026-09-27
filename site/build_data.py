@@ -16,6 +16,11 @@ REQUIRED_FIELDS = {
     "avg_partial",
     "seconds",
 }
+OPTIONAL_FIELDS = {
+    "p95_latency_seconds",
+    "tokens_per_pass",
+    "cost_per_pass_usd",
+}
 
 
 def build(source: Path, destination: Path) -> None:
@@ -31,7 +36,9 @@ def build(source: Path, destination: Path) -> None:
             raise ValueError(f"row {index} is missing: {', '.join(sorted(missing))}")
         if row.get("error"):
             continue
-        public_rows.append({field: row[field] for field in sorted(REQUIRED_FIELDS)})
+        public_row = {field: row[field] for field in sorted(REQUIRED_FIELDS)}
+        public_row.update({field: row.get(field) for field in sorted(OPTIONAL_FIELDS)})
+        public_rows.append(public_row)
 
     public_rows.sort(
         key=lambda row: (row["pass_rate"], row["avg_efficiency"], -row["seconds"]),

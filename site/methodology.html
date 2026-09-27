@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How vimbench constructs tasks, runs model keystrokes in real Vim, scores results, and helps users interpret the leaderboard.">
+  <meta name="theme-color" content="#10140f">
+  <meta property="og:title" content="Methodology — vimbench">
+  <meta property="og:description" content="The complete, executable methodology behind the vimbench LLM Vim benchmark.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://supercobra.github.io/vimbench/methodology.html">
+  <title>Methodology — vimbench</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="methodology-page">
+  <a class="skip-link" href="#content">Skip to methodology</a>
+  <header class="nav shell">
+    <a class="brand" href="index.html" aria-label="vimbench home"><span aria-hidden="true">:</span>vimbench</a>
+    <nav aria-label="Primary navigation">
+      <a href="index.html#leaderboard">Leaderboard</a>
+      <a href="index.html#why-vim">Why Vim?</a>
+      <a href="#content" aria-current="page">Methodology</a>
+      <a class="repo-link" href="https://github.com/supercobra/vimbench">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="content">
+    <section class="methodology-hero shell">
+      <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> open protocol · executable scoring · reproducible tasks</p>
+      <h1>How vimbench<br><em>measures skill.</em></h1>
+      <div class="methodology-intro">
+        <p>vimbench tests whether a language model can turn a precise editing request into a correct Vim action sequence. The result is executed in real Vim and judged against an exact target buffer.</p>
+        <p>The benchmark is deliberately narrow. It does not measure every dimension of an LLM. It isolates a useful one: reliable translation from intent to stateful tool use.</p>
+      </div>
+      <nav class="page-index" aria-label="Methodology sections">
+        <a href="#protocol"><span>01</span> Protocol</a>
+        <a href="#tasks"><span>02</span> Tasks</a>
+        <a href="#scoring"><span>03</span> Scoring</a>
+        <a href="#interpretation"><span>04</span> Interpretation</a>
+        <a href="#controls"><span>05</span> Controls</a>
+        <a href="#limits"><span>06</span> Limits</a>
+      </nav>
+    </section>
+
+    <section class="method-section dark-section" id="protocol">
+      <div class="shell method-layout">
+        <header>
+          <p class="kicker">01 / PROTOCOL</p>
+          <h2>From request<br>to exact diff.</h2>
+          <p class="section-summary">The model never edits the target directly. It emits keystrokes, and the harness does the rest.</p>
+        </header>
+        <div class="method-content">
+          <ol class="protocol-list">
+            <li>
+              <span>1</span>
+              <div><h3>Present the task</h3><p>The prompt contains a natural-language instruction, the starting buffer, the desired target buffer, and the supported keystroke notation. Few-shot examples establish the response format.</p></div>
+            </li>
+            <li>
+              <span>2</span>
+              <div><h3>Parse the answer</h3><p>The runner extracts the candidate sequence, accepting plain text or fenced code. Named tokens such as <code>&lt;Esc&gt;</code>, <code>&lt;CR&gt;</code>, and <code>&lt;C-V&gt;</code> are converted into their byte values.</p></div>
+            </li>
+            <li>
+              <span>3</span>
+              <div><h3>Replay in real Vim</h3><p>The harness writes the start buffer to a temporary file and feeds the bytes to headless Vim. A safety suffix exits and saves even if the model forgets, so the resulting state can always be scored.</p></div>
+            </li>
+            <li>
+              <span>4</span>
+              <div><h3>Compare and score</h3><p>The saved file is compared byte-for-byte with the target. Exact matches pass; failures receive a similarity score; correct answers also receive a keystroke-efficiency score.</p></div>
+            </li>
+          </ol>
+          <div class="code-panel">
+            <div class="code-panel-title"><span>Execution path</span><span>single turn</span></div>
+            <pre><code>model response
+      │
+      ▼
+notation_to_bytes()
+      │
+      ▼
+vim -u NONE -N -n -s keys buf.txt
+      │
+      ▼
+final buffer == target buffer</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="method-section shell" id="tasks">
+      <div class="method-layout">
+        <header>
+          <p class="kicker">02 / TASKS</p>
+          <h2>Verified before<br>models see them.</h2>
+          <p class="section-summary">Each seed task has a known reference sequence that must produce the exact target through the same harness.</p>
+        </header>
+        <div class="method-content">
+          <div class="task-anatomy">
+            <div><span>Instruction</span><p>“Change the text inside the quotes to goodbye.”</p></div>
+            <div><span>Start buffer</span><pre><code>message = "hello world"</code></pre></div>
+            <div><span>Target buffer</span><pre><code>message = "goodbye"</code></pre></div>
+            <div><span>Reference</span><pre><code>f"ci"goodbye&lt;Esc&gt;:wq&lt;CR&gt;</code></pre></div>
+          </div>
+          <div class="tier-grid">
+            <article><span>Tier 1</span><h3>Mechanical</h3><p>Line deletion, swaps, joins, copies, case changes, and basic movement.</p></article>
+            <article><span>Tier 2</span><h3>Vim grammar</h3><p>Motions, text objects, macros, visual block operations, and composed commands.</p></article>
+            <article><span>Tier 3</span><h3>Ex commands</h3><p>Substitution, global operations, ranges, sorting, and pattern-based edits.</p></article>
+            <article><span>Tier 4</span><h3>Composed edits</h3><p>Multi-part transformations such as CSV changes, extraction, and cleanup.</p></article>
+          </div>
+          <p class="callout"><strong>Fresh-task track.</strong> Programmatic templates can generate additional parameterized tasks. A generated task is kept only when its reference sequence replays to an exact match, reducing dependence on a fixed, potentially memorized set.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="method-section scoring-section" id="scoring">
+      <div class="shell method-layout">
+        <header>
+          <p class="kicker">03 / SCORING</p>
+          <h2>Three numbers.<br>Different questions.</h2>
+          <p class="section-summary">Read pass rate first. Efficiency and partial credit explain what happened around it.</p>
+        </header>
+        <div class="method-content score-cards">
+          <article>
+            <span class="score-symbol">01</span>
+            <h3>Pass rate</h3>
+            <code>exact matches / tasks</code>
+            <p>The primary reliability measure. A pass requires the final buffer to match the target byte-for-byte, including whitespace and newlines.</p>
+          </article>
+          <article>
+            <span class="score-symbol">02</span>
+            <h3>Efficiency</h3>
+            <code>min(1, reference keys / model keys)</code>
+            <p>Calculated for passed tasks. It rewards concise action sequences without granting extra credit for beating the reference.</p>
+          </article>
+          <article>
+            <span class="score-symbol">03</span>
+            <h3>Partial credit</h3>
+            <code>buffer similarity, 0…1</code>
+            <p>A diagnostic score for the final buffer. It distinguishes a near miss from a destructive failure, but does not turn a failure into a pass.</p>
+          </article>
+          <article>
+            <span class="score-symbol">04</span>
+            <h3>P95 latency</h3>
+            <code>95th percentile request time</code>
+            <p>Shows tail latency: 95% of model requests finished this quickly or faster. It better reflects occasional slow waits than an average alone. Total wall-clock runtime is reported separately.</p>
+          </article>
+          <div class="usage-metrics">
+            <div>
+              <span class="score-symbol">OPERATIONAL METRICS</span>
+              <h3>Tokens and cost belong beside the score.</h3>
+              <p>When an API reports usage, vimbench should record input, output, cached, and reasoning tokens separately, plus the billed cost. These numbers explain how expensive a model was to reach its accuracy.</p>
+            </div>
+            <div>
+              <code>total tokens / passed tasks</code>
+              <p><strong>Tokens per successful task</strong> is the most useful comparison: it does not reward a cheap model for failing quickly. Cost per successful task is the corresponding real-world measure.</p>
+              <p class="metric-caution">Compare with care: providers use different tokenizers, cache rules, and reasoning-token reporting. Missing hidden tokens must be shown as unavailable—not treated as zero.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="method-section shell" id="interpretation">
+      <div class="method-layout">
+        <header>
+          <p class="kicker">04 / INTERPRETATION</p>
+          <h2>What it means<br>when choosing.</h2>
+          <p class="section-summary">The leaderboard is evidence about exact editing behavior—not a universal ranking of model quality.</p>
+        </header>
+        <div class="method-content">
+          <div class="interpret-grid">
+            <article class="good-signal"><span>STRONG EVIDENCE FOR</span><ul><li>Following precise transformation instructions</li><li>Producing executable tool syntax</li><li>Tracking state through multi-action edits</li><li>Finishing with an exact requested result</li><li>Doing the above with relatively few actions</li></ul></article>
+            <article class="weak-signal"><span>WEAK OR NO EVIDENCE FOR</span><ul><li>Factual accuracy and research quality</li><li>Long-form writing or conversation</li><li>Image, audio, or multimodal understanding</li><li>Repository-scale software architecture</li><li>Price, privacy, latency, and context limits</li></ul></article>
+          </div>
+          <div class="decision-steps">
+            <h3>A practical way to use the table</h3>
+            <ol>
+              <li><strong>Start with pass rate.</strong> If you want an agent to make dependable edits, exact success is the most relevant column.</li>
+              <li><strong>Use efficiency as a tie-breaker.</strong> Among similarly accurate models, concise tool use can reduce drift and overhead.</li>
+              <li><strong>Inspect partial credit.</strong> When pass rates are close, it reveals whether misses tend to be recoverable or destructive.</li>
+              <li><strong>Then apply your constraints.</strong> Compare price, speed, privacy, availability, context window, and results on a sample of your own work.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="method-section dark-section" id="controls">
+      <div class="shell method-layout">
+        <header>
+          <p class="kicker">05 / CONTROLS</p>
+          <h2>Less environment.<br>Less ambiguity.</h2>
+          <p class="section-summary">The harness removes common sources of variation so model behavior dominates the result.</p>
+        </header>
+        <div class="method-content controls-grid">
+          <article><h3>Clean Vim</h3><p><code>-u NONE -N -n</code> disables user configuration and swapfiles while using nocompatible mode.</p></article>
+          <article><h3>No shell shortcut</h3><p><code>set shell=/bin/false</code> blocks shell commands. The benchmark measures Vim editing, not escape hatches.</p></article>
+          <article><h3>Fixed timeout</h3><p>Each task has a 10-second execution limit so runaway macros and hung sessions become consistent failures.</p></article>
+          <article><h3>Exact fixtures</h3><p>Start and target buffers are explicit strings, and every reference answer is replay-verified through real Vim.</p></article>
+          <article><h3>Shared task set</h3><p>Models in a leaderboard run receive the same selected tasks, preserving head-to-head comparability.</p></article>
+          <article><h3>Open implementation</h3><p>The tasks, harness, scorer, runner, and result format are public and can be audited or run locally.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="method-section shell" id="limits">
+      <div class="method-layout">
+        <header>
+          <p class="kicker">06 / LIMITS</p>
+          <h2>Know what is<br>outside the frame.</h2>
+        </header>
+        <div class="method-content limits-list">
+          <article><span>01</span><div><h3>Narrow domain</h3><p>Vim competence is a proxy for compact, stateful tool use. It is not a complete coding, reasoning, or intelligence evaluation.</p></div></article>
+          <article><span>02</span><div><h3>Reference is not proven optimal</h3><p>Efficiency compares against a verified reference solution, not a mathematically guaranteed shortest possible sequence.</p></div></article>
+          <article><span>03</span><div><h3>Environment scope</h3><p>The task language intentionally targets a portable subset of Vim. Plugin knowledge and advanced full-Vim features are outside the current benchmark.</p></div></article>
+          <article><span>04</span><div><h3>Sample size and contamination</h3><p>The 30-task seed set is small enough to interpret but cannot cover every edit. Generated tasks help, but do not eliminate all benchmark familiarity risk.</p></div></article>
+          <article><span>05</span><div><h3>Provider settings matter</h3><p>Prompt format, model version, reasoning effort, temperature, and API behavior can affect results. Compare runs with matching settings.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="reproduce">
+      <div class="shell reproduce-inner">
+        <div>
+          <p class="kicker">REPRODUCE IT</p>
+          <h2>Trust the run,<br>not the claim.</h2>
+          <p>Verify every reference task on your machine, inspect the source, then run the same suite against your model.</p>
+        </div>
+        <div class="install-card">
+          <div class="install-title"><span>Reference verification</span><span>Python 3 + Vim</span></div>
+          <pre><code><span>$</span> git clone https://github.com/supercobra/vimbench.git
+<span>$</span> cd vimbench
+<span>$</span> python3 run.py --verify
+<span>#</span> 30/30 verified</code></pre>
+          <a href="https://github.com/supercobra/vimbench">Inspect the implementation <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <a class="brand" href="index.html"><span aria-hidden="true">:</span>vimbench</a>
+    <p>Open source. Exact by construction.</p>
+    <a href="index.html#leaderboard">Back to leaderboard →</a>
+  </footer>
+</body>
+</html>

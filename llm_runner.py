@@ -8,13 +8,14 @@ Without any of these, MockProvider validates the pipeline end-to-end.
 """
 import json
 import os
-import sys
+import time
 import urllib.request
 
-sys.path.insert(0, "/home/hatch/workspace/vimbench")
-from harness import run_vim, keystroke_count
 from scorer import score_task, summarize
 from multiturn import run_multiturn, summarize_multiturn
+from tasksets import load_tasks
+from telemetry import (add_cost, anthropic_usage, openai_usage,
+                       summarize_telemetry)
 
 NOTATION_HELP = """Keystroke notation: <Esc> = Escape, <CR> = Enter, <Tab>, <Space>,
 <BS> = Backspace, <C-X> = Ctrl+X (e.g. <C-V> starts visual block mode),
@@ -91,12 +92,13 @@ class AnthropicProvider(BaseProvider):
     name = "anthropic"
     model = "claude-sonnet-4-6"
 
-    def __init__(self, api_key=None, model=None):
+    def __init__(self, api_key=None, model=None, timeout=120, **kw):
         self.key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         if not self.key:
             raise RuntimeError("ANTHROPIC_API_KEY not set")
         if model:
             self.model = model
+        self.timeout = timeout
 
     def complete(self, task, prompt):
         body = json.dumps({
@@ -108,8 +110,9 @@ class AnthropicProvider(BaseProvider):
             "https://api.anthropic.com/v1/messages", data=body,
             headers={"x-api-key": self.key, "anthropic-version": "2023-06-01",
                      "content-type": "application/json"})
-        with urllib.request.urlopen(req, timeout=120) as r:
+        with urllib.request.urlopen(req, timeout=self.timeout) as r:
             data = json.load(r)
+        self.last_usage = anthropic_usage(data.get("usage"))
         return data["content"][0]["text"]
 
 
@@ -117,27 +120,34 @@ class OpenAIProvider(BaseProvider):
     name = "openai"
     model = "gpt-5"
 
-    def __init__(self, api_key=None, model=None):
+    def __init__(self, api_key=None, model=None, timeout=120, **kw):
         self.key = api_key or os.environ.get("OPENAI_API_KEY")
         if not self.key:
             raise RuntimeError("OPENAI_API_KEY not set")
         if model:
             self.model = model
+        self.timeout = timeout
 
     def complete(self, task, prompt):
-        body = json.dumps({
-            "model": self.model, "max_tokens": 500,
+        body = {
+            "model": self.model,
             "messages": [
                 {"role": "system",
                  "content": SYSTEM + "\n\n" + fewshot_block()},
                 {"role": "user", "content": prompt}],
-        }).encode()
+        }
+        if self.model.startswith(("gpt-5", "o1", "o3", "o4")):
+            body.update(max_completion_tokens=1000, reasoning_effort="low")
+        else:
+            body["max_tokens"] = 500
+        body = json.dumps(body).encode()
         req = urllib.request.Request(
             "https://api.openai.com/v1/chat/completions", data=body,
             headers={"authorization": f"Bearer {self.key}",
                      "content-type": "application/json"})
-        with urllib.request.urlopen(req, timeout=120) as r:
+        with urllib.request.urlopen(req, timeout=self.timeout) as r:
             data = json.load(r)
+        self.last_usage = openai_usage(data.get("usage"))
         return data["choices"][0]["message"]["content"]
 
 
@@ -173,6 +183,7 @@ class OpenAICompatProvider(BaseProvider):
             raise RuntimeError(
                 f"could not reach a local LLM at {self.base_url} "
                 f"(is LM Studio/Ollama running and serving? {e})")
+        self.last_usage = openai_usage(data.get("usage"))
         return data["choices"][0]["message"]["content"]
 
 
@@ -183,33 +194,68 @@ def make_provider(name, **kw):
             "local": OpenAICompatProvider}[name](**kw)
 
 
+def complete_with_telemetry(provider, task, prompt, pricing=None):
+    """Call a provider and return text plus request-level telemetry."""
+    provider.last_usage = None
+    started = time.perf_counter()
+    text = provider.complete(task, prompt)
+    latency = round(time.perf_counter() - started, 6)
+    pricing = pricing or {}
+    usage = add_cost(
+        getattr(provider, "last_usage", None),
+        pricing.get("input_per_million"),
+        pricing.get("output_per_million"),
+    )
+    return text, latency, usage
+
+
 class ProviderAgent:
     """Adapts a provider to the multi-turn agent protocol."""
 
-    def __init__(self, provider, task):
+    def __init__(self, provider, task, pricing=None):
         self.provider = provider
         self.task = task
+        self.pricing = pricing
 
     def __call__(self, obs):
-        text = self.provider.complete(
-            self.task, build_prompt(self.task, buffer=obs["buffer"],
-                                    turn=obs["turn"], history=obs["history"]))
+        text, latency, usage = complete_with_telemetry(
+            self.provider,
+            self.task,
+            build_prompt(self.task, buffer=obs["buffer"],
+                         turn=obs["turn"], history=obs["history"]),
+            self.pricing,
+        )
+        telemetry = {"latency_seconds": latency, "usage": usage}
         keys = extract_keys(text)
         if keys.strip() == "DONE":
-            return {"done": True}
-        return {"keys": keys}
+            return {"done": True, "telemetry": telemetry}
+        return {"keys": keys, "telemetry": telemetry}
 
 
-def run_llm(tasks, provider, track="single", max_turns=8):
+def run_llm(tasks, provider, track="single", max_turns=8, pricing=None):
     results = []
     for t in tasks:
         if track == "multi":
-            results.append(run_multiturn(t, ProviderAgent(provider, t),
-                                         max_turns=max_turns))
+            results.append(run_multiturn(
+                t, ProviderAgent(provider, t, pricing), max_turns=max_turns))
         else:
-            text = provider.complete(t, build_prompt(t))
-            results.append(score_task(t, extract_keys(text)))
+            text, latency, usage = complete_with_telemetry(
+                provider, t, build_prompt(t), pricing)
+            result = score_task(t, extract_keys(text))
+            result.update({
+                "latency_seconds": latency,
+                "request_latencies": [latency],
+                "usage": usage,
+            })
+            results.append(result)
     return results
+
+
+def summarize_run(results, track="single"):
+    summary = (summarize_multiturn(results) if track == "multi"
+               else summarize(results))
+    summary.update(summarize_telemetry(results))
+    return summary
 
 
 def main():
@@ -229,17 +275,25 @@ def main():
                          "default model for anthropic/openai")
     ap.add_argument("--timeout", type=int, default=120,
                     help="HTTP timeout in seconds per completion")
+    ap.add_argument("--input-price", type=float, default=None,
+                    help="optional USD price per million input tokens")
+    ap.add_argument("--output-price", type=float, default=None,
+                    help="optional USD price per million output tokens")
     ap.add_argument("--track", default="single", choices=["single", "multi"])
     ap.add_argument("--task-set", default="seed", choices=["seed", "synth", "all"])
+    ap.add_argument("--synth-tasks", default=None,
+                    help="synthesized task JSON (default: tasks_synth.json next to this script)")
     ap.add_argument("--max-tasks", type=int, default=10)
     ap.add_argument("--max-turns", type=int, default=8)
     ap.add_argument("--out", default="llm_results.json")
     args = ap.parse_args()
+    if (args.input_price is None) != (args.output_price is None):
+        ap.error("--input-price and --output-price must be supplied together")
+    if any(price is not None and price < 0
+           for price in (args.input_price, args.output_price)):
+        ap.error("token prices cannot be negative")
 
-    from tasks import TASKS
-    pool = list(TASKS)
-    if args.task_set in ("synth", "all"):
-        pool += json.load(open("/home/hatch/workspace/vimbench/tasks_synth.json"))
+    pool = load_tasks(args.task_set, args.synth_tasks)
     tasks = pool[:args.max_tasks]
 
     provider = make_provider(args.provider, model=args.model,
@@ -247,15 +301,17 @@ def main():
     print(f"provider={provider.name} track={args.track} tasks={len(tasks)}"
           + (f" base_url={provider.base_url} model={provider.model}"
              if args.provider == "local" else ""))
-    results = run_llm(tasks, provider, track=args.track, max_turns=args.max_turns)
-    summary = (summarize_multiturn(results) if args.track == "multi"
-               else summarize(results))
+    pricing = {"input_per_million": args.input_price,
+               "output_per_million": args.output_price}
+    results = run_llm(tasks, provider, track=args.track,
+                      max_turns=args.max_turns, pricing=pricing)
+    summary = summarize_run(results, args.track)
     print(json.dumps(summary, indent=2))
     # strip bulky histories before saving
     for r in results:
         r.pop("history", None)
         r.pop("final_buffer", None)
-    with open(args.out, "w") as f:
+    with open(args.out, "w", encoding="utf-8") as f:
         json.dump({"summary": summary, "results": results}, f, indent=2)
     print(f"wrote {args.out}")
 
