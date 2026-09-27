@@ -6,10 +6,9 @@ contamination-proof and effectively infinite.
 """
 import json
 import random
-import sys
 
-sys.path.insert(0, "/home/hatch/workspace/vimbench")
 from harness import run_vim
+from tasksets import DEFAULT_SYNTH_TASKS
 
 WORDS = ("apple banana cherry date elderberry fig grape honeydew kiwi lemon mango "
          "nectarine orange papaya quince raspberry strawberry tangerine ugli "
@@ -287,10 +286,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--count", type=int, default=4)
     ap.add_argument("--seed", type=int, default=SEED)
-    ap.add_argument("--out", default="/home/hatch/workspace/vimbench/tasks_synth.json")
+    ap.add_argument("--out", default=str(DEFAULT_SYNTH_TASKS),
+                    help="output JSON (default: tasks_synth.json next to this script)")
     args = ap.parse_args()
     tasks = generate(count_per_template=args.count, seed=args.seed)
-    with open(args.out, "w") as f:
+    with open(args.out, "w", encoding="utf-8") as f:
         json.dump(tasks, f, indent=1)
     tiers = {}
     for t in tasks:

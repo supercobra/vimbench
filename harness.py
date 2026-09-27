@@ -15,7 +15,7 @@ import re
 import subprocess
 import tempfile
 
-VIM_BIN = "vi"  # vim 9.1 (tiny) on this machine; override if needed
+VIM_BIN = os.environ.get("VIMBENCH_VIM", "vi")
 TIMEOUT_S = 10
 
 _TOKEN_RE = re.compile(r"<(Esc|CR|NL|Tab|Space|BS|C-[A-Za-z])>")

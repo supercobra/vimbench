@@ -25,12 +25,14 @@ model output (notation) → notation_to_bytes → vi -u NONE -N -n -s keys buf.t
 
 ## Usage examples
 
-All commands run from `~/workspace/vimbench`.
+All commands run from the repository root and require Python 3. The scripts resolve
+bundled files relative to their own location, so they can also be invoked from another
+working directory.
 
 **1. Verify every reference solution** (validates the task set itself):
 
 ```
-python run.py --verify
+python3 run.py --verify
 # OK   t1-delete-second-line
 # OK   t1-swap-first-two
 # ...
@@ -41,7 +43,7 @@ python run.py --verify
 (reference = optimal, verbose = correct but wasteful, sloppy = 6 wrong answers):
 
 ```
-python run.py --demo
+python3 run.py --demo
 # === reference ===
 # pass rate: 30/30 (100%)   avg efficiency (passed): 1.0   avg partial: 1.0
 # === verbose ===
@@ -54,7 +56,7 @@ python run.py --demo
 candidate answer:
 
 ```
-python -c "
+python3 -c "
 from harness import run_vim
 final, err = run_vim('alpha\nbeta\ngamma\n', 'jdd:wq<CR>')
 print(repr(final), err)
@@ -68,39 +70,50 @@ print(repr(final), err)
 # solutions.json
 {"t1-delete-second-line": "jdd:wq<CR>", "t1-swap-first-two": "ddp:wq<CR>"}
 
-python run.py --solutions solutions.json --out my_results.json
+python3 run.py --solutions solutions.json --out my_results.json
 ```
 
 **5. Generate fresh tasks** (contamination-proof; only verified tasks are kept):
 
 ```
-python synthesize.py --count 4   # 4 per template -> tasks_synth.json
-python run.py --demo --task-set all   # seed + generated, 102 tasks
+python3 synthesize.py --count 4   # 4 per template -> tasks_synth.json
+python3 run.py --demo --task-set all   # seed + generated, 102 tasks
 ```
 
 **6. Try the multi-turn track** — chunked-reference solves across turns,
 flail fails, recover deletes the wrong line then fixes it:
 
 ```
-python multiturn.py
+python3 multiturn.py
 ```
 
 **7. Run a real model** (see [LLM runner](#llm-runner) for cloud and local options):
 
 ```
-python llm_runner.py --provider mock --max-tasks 5     # pipeline check, no keys
-python llm_runner.py --provider anthropic --track multi --max-tasks 30 --out claude.json
-python llm_runner.py --provider local --model qwen2.5-coder:7b --max-tasks 30
+python3 llm_runner.py --provider mock --max-tasks 5     # pipeline check, no keys
+python3 llm_runner.py --provider anthropic --track multi --max-tasks 30 --out claude.json
+python3 llm_runner.py --provider local --model qwen2.5-coder:7b --max-tasks 30
 ```
 
 **8. Compare several models head-to-head** (see [Leaderboard](#leaderboard)):
 
 ```
-python leaderboard.py --track single --task-set all --max-tasks 50 \
+python3 leaderboard.py --track single --task-set all --max-tasks 50 \
     --model "qwen2.5-coder,http://localhost:11434/v1,qwen2.5-coder:7b" \
     --model "mistral,http://localhost:11434/v1,mistral:7b" \
     --model "claude,anthropic:,claude-sonnet-4-6"
 ```
+
+**9. Run the regression suite** (notation, real-Vim smoke tests, scoring, task
+loading, and multi-turn behavior):
+
+```
+python3 -m unittest discover -s tests -v
+```
+
+Use `--synth-tasks PATH` with `run.py`, `llm_runner.py`, or `leaderboard.py` to
+load a generated task file from a custom location. Without it, the scripts use
+`tasks_synth.json` beside the source files.
 
 ## Keystroke notation
 
@@ -136,8 +149,9 @@ Aggregate: pass rate, mean efficiency over passed tasks, mean partial credit.
 
 ## Anti-cheat & determinism
 
-- Pinned invocation: `vi -u NONE -N -n --cmd 'set shell=/bin/false'`. No plugins,
-  no vimrc, no swapfiles.
+- Pinned invocation: `${VIMBENCH_VIM:-vi} -u NONE -N -n --cmd 'set shell=/bin/false'`.
+  Set `VIMBENCH_VIM` to select an explicit Vim executable; CI uses `vim` on a
+  pinned Ubuntu 24.04 runner. No plugins, no vimrc, no swapfiles.
 - `set shell=/bin/false` neuters `:!cmd` / `:r !cmd` — this measures vim skill,
   not shell skill.
 - 10s timeout per task; hangs (runaway macros) score as failures.
@@ -182,7 +196,7 @@ exact match through the real harness are kept — verification by construction,
 so the pool is contamination-proof and effectively infinite:
 
 ```
-python synthesize.py --count 4   # -> tasks_synth.json (72 tasks, tiers 1-4)
+python3 synthesize.py --count 4   # -> tasks_synth.json (72 tasks, tiers 1-4)
 ```
 
 `run.py --demo --task-set all` and `llm_runner.py --task-set all` include them.
@@ -199,7 +213,7 @@ reset (this vim-tiny build is compiled `-viminfo`, so register persistence is
 impossible). A macro recorded in turn 1 cannot be replayed in turn 2; `:set`
 must be re-issued in the same turn that depends on it.
 
-`python multiturn.py` demos three agents: chunked-reference (multi-turn solve),
+`python3 multiturn.py` demos three agents: chunked-reference (multi-turn solve),
 flail (fails), and recover — which deletes the wrong line on turn 1, restores
 it from the start buffer on turn 2, and completes on turn 3. Single-shot would
 score that run 0; the track rewards the recovery.
@@ -210,7 +224,7 @@ score that run 0; the track rewards the recovery.
 
 ```
 export ANTHROPIC_API_KEY=...   # or OPENAI_API_KEY
-python llm_runner.py --provider anthropic --track single --task-set all \
+python3 llm_runner.py --provider anthropic --track single --task-set all \
     --max-tasks 50 --out claude_results.json
 ```
 
@@ -222,11 +236,11 @@ endpoint — LM Studio, Ollama, vLLM, llama.cpp server, etc. No API key needed,
 
 ```
 # LM Studio (default base URL http://localhost:1234/v1)
-python llm_runner.py --provider local --model <model-id> \
+python3 llm_runner.py --provider local --model <model-id> \
     --track single --task-set all --max-tasks 50 --out local_results.json
 
 # Ollama
-python llm_runner.py --provider local \
+python3 llm_runner.py --provider local \
     --base-url http://localhost:11434/v1 --model qwen2.5-coder:7b \
     --track multi --max-tasks 30 --out ollama_multi.json
 ```
@@ -235,6 +249,18 @@ python llm_runner.py --provider local \
 `LOCAL_LLM_MODEL` env vars, and `--timeout` adjusts the per-request HTTP
 timeout (local models can be slow; default 120s). If the server isn't
 reachable you get a plain-English error naming the URL.
+
+Every provider request records wall-clock latency. Run summaries report average
+and **p95 request latency**; per-task results retain the raw request latencies.
+When the provider returns usage data, vimbench also records input, output,
+cached, reasoning, and total tokens, plus **tokens per successful task**. Pass
+`--input-price` and `--output-price` (USD per million tokens) to add estimated
+total cost and cost per successful task:
+
+```
+python3 llm_runner.py --provider openai --model gpt-5 \
+    --input-price 1.25 --output-price 10 --max-tasks 30
+```
 
 Note: the local server runs wherever you point `--base-url` — if your models
 live on your laptop rather than this machine, use its LAN address instead of
@@ -256,12 +282,12 @@ per-model summaries plus full per-task details.
 
 ```
 # contenders in a JSON file: {name, base_url|provider, model}
-python leaderboard.py --models-file models.json \
+python3 leaderboard.py --models-file models.json \
     --track single --task-set all --max-tasks 50
 
 # ...or inline (repeatable): --model "name,base_url,model-id"
 # (use the provider name as base_url for cloud entries)
-python leaderboard.py --track multi --max-tasks 30 \
+python3 leaderboard.py --track multi --max-tasks 30 \
     --model "qwen2.5-coder,http://localhost:11434/v1,qwen2.5-coder:7b" \
     --model "mistral,http://localhost:11434/v1,mistral:7b" \
     --model "claude,anthropic:,claude-sonnet-4-6"
@@ -273,18 +299,24 @@ python leaderboard.py --track multi --max-tasks 30 \
 [
   {"name": "qwen2.5-coder", "base_url": "http://localhost:11434/v1",
    "model": "qwen2.5-coder:7b"},
-  {"name": "claude", "provider": "anthropic", "model": "claude-sonnet-4-6"}
+  {"name": "claude", "provider": "anthropic", "model": "claude-sonnet-4-6",
+   "pricing": {"input_per_million": 3, "output_per_million": 15}}
 ]
 ```
+
+Pricing is optional because model rates change. Supply it explicitly per entry
+to calculate estimated cost; otherwise cost fields remain `null`. Token fields
+also remain `null` when a provider does not report usage rather than being
+misrepresented as zero.
 
 Example output (from a demo run: a perfect reference solution, a stub local
 model served over HTTP, and an unreachable server):
 
 ```
-model       pass   pass%  eff    part   time
-----------  -----  -----  -----  -----  ----
-reference   30/30  100%   1.000  1.000  0s
-stub-local  1/30   3%     1.000  0.467  0s
+model       pass   pass%  eff    part   p95    tok/pass  $/pass  time
+----------  -----  -----  -----  -----  -----  --------  ------  ----
+reference   30/30  100%   1.000  1.000  0.00s  -         -       0s
+stub-local  1/30   3%     1.000  0.467  0.02s  -         -       0s
 unreachable  ERROR: could not reach a local LLM at http://127.0.0.1:19999/v1 (is
 ```
 

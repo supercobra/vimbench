@@ -1,0 +1,31 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    env:
+      VIMBENCH_VIM: vim
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Vim
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes vim
+          vim --version
+      - name: Compile Python sources
+        run: python3 -m py_compile *.py tests/*.py
+      - name: Run regression tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Verify seed tasks
+        run: python3 run.py --verify
+      - name: Verify synthesized-task pipeline
+        run: |
+          python3 synthesize.py --count 1 --seed 20260926 --out /tmp/tasks_synth.json
+          python3 run.py --demo --task-set synth --synth-tasks /tmp/tasks_synth.json --out /tmp/demo_results.json

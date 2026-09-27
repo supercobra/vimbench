@@ -1,34 +1,26 @@
 """Runner CLI.
 
 Usage:
-    python run.py --verify            # check all reference solutions (task validation)
-    python run.py --demo [--task-set seed|synth|all]
+    python3 run.py --verify            # check all reference solutions (task validation)
+    python3 run.py --demo [--task-set seed|synth|all]
                                       # score three synthetic models, print leaderboard
-    python run.py --solutions sol.json [--task-set ...] --out results.json
+    python3 run.py --solutions sol.json [--task-set ...] --out results.json
                                       # score a model's solutions: {task_id: notation}
-    python multiturn.py               # multi-turn track demo (chunked / flail / recover agents)
-    python synthesize.py --count N    # generate N verified tasks per template
-    python llm_runner.py --provider mock|anthropic|openai --track single|multi ...
+    python3 multiturn.py               # multi-turn track demo (chunked / flail / recover agents)
+    python3 synthesize.py --count N    # generate N verified tasks per template
+    python3 llm_runner.py --provider mock|anthropic|openai --track single|multi ...
                                       # run a real (or mock) LLM over the tasks
 """
 import argparse
 import json
 import sys
 
-sys.path.insert(0, "/home/hatch/workspace/vimbench")
 from harness import run_vim
 from scorer import score_task, summarize
+from tasksets import load_tasks
 from tasks import TASKS
 
 BY_ID = {t["id"]: t for t in TASKS}
-
-
-def load_tasks(task_set="seed"):
-    tasks = list(TASKS)
-    if task_set in ("synth", "all"):
-        with open("/home/hatch/workspace/vimbench/tasks_synth.json") as f:
-            tasks += json.load(f)
-    return tasks
 
 # Correct but wasteful solutions — should pass with efficiency < 1.
 VERBOSE = {
@@ -72,8 +64,8 @@ def print_report(name, results):
               f"{r['ref_keystrokes']:>3d} {r['efficiency']:>5.2f} {r['partial']:>7.2f}")
 
 
-def demo(task_set="seed"):
-    tasks = load_tasks(task_set)
+def demo(task_set="seed", synth_path=None, out="demo_results.json"):
+    tasks = load_tasks(task_set, synth_path)
     reference = {t["id"]: t["reference"] for t in tasks}
     verbose = {**reference, **VERBOSE}
     sloppy = {**reference, **SLOPPY}
@@ -91,9 +83,9 @@ def demo(task_set="seed"):
     for name, data in rows:
         s = data["summary"]
         print(f"{name:10s} pass {s['passed']}/{s['tasks']}  efficiency {s['avg_efficiency']}")
-    with open("/home/hatch/workspace/vimbench/demo_results.json", "w") as f:
+    with open(out, "w", encoding="utf-8") as f:
         json.dump(all_results, f, indent=2)
-    print("\nwrote demo_results.json")
+    print(f"\nwrote {out}")
 
 
 def main():
@@ -101,8 +93,12 @@ def main():
     ap.add_argument("--verify", action="store_true")
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--solutions")
-    ap.add_argument("--out", default="results.json")
+    ap.add_argument("--out", default=None,
+                    help="result file (default: demo_results.json for --demo, "
+                         "results.json for --solutions)")
     ap.add_argument("--task-set", default="seed", choices=["seed", "synth", "all"])
+    ap.add_argument("--synth-tasks", default=None,
+                    help="synthesized task JSON (default: tasks_synth.json next to this script)")
     args = ap.parse_args()
 
     if args.verify:
@@ -115,16 +111,17 @@ def main():
         print(f"{len(TASKS) - fails}/{len(TASKS)} verified")
         sys.exit(1 if fails else 0)
     elif args.demo:
-        demo(args.task_set)
+        demo(args.task_set, args.synth_tasks, args.out or "demo_results.json")
     elif args.solutions:
-        tasks = load_tasks(args.task_set)
-        with open(args.solutions) as f:
+        tasks = load_tasks(args.task_set, args.synth_tasks)
+        with open(args.solutions, encoding="utf-8") as f:
             solutions = json.load(f)
         results = run_all(tasks, solutions)
         print_report(args.solutions, results)
-        with open(args.out, "w") as f:
+        out = args.out or "results.json"
+        with open(out, "w", encoding="utf-8") as f:
             json.dump({"summary": summarize(results), "results": results}, f, indent=2)
-        print(f"\nwrote {args.out}")
+        print(f"\nwrote {out}")
     else:
         ap.print_help()
 

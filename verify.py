@@ -1,7 +1,7 @@
 """Verify every task is solvable by construction: the reference keystrokes,
 replayed through the real harness, must produce the target buffer exactly."""
 import sys
-sys.path.insert(0, "/home/hatch/workspace/vimbench")
+
 from harness import run_vim, keystroke_count
 from tasks import TASKS
 
